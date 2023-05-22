@@ -19,11 +19,12 @@ async function createMail(request, response) {
   const {
     receiver_mail,
     date_time,
+    subject,
     audio_data,
   } = request.body;
   pool.query(
-    "INSERT INTO project (sender_id, receiver_mail, datetime, audio_data) VALUES ($1, $2, $3, $4)",
-    [sender_id, receiver_mail, date_time, audio_data],
+    "INSERT INTO project (sender_id, receiver_mail, datetime, subject,audio_data) VALUES ($1, $2, $3, $4, $5)",
+    [sender_id, receiver_mail, date_time, subject,audio_data],
 
     (error, results) => {
       if (error) {
