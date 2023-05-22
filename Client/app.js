@@ -1,6 +1,7 @@
 // import { io } from "socket.io-client";
 
 const socket = io("ws://localhost:8080");
+
 socket.on("message", (text) => {
   const li = `<li> ${text}</li>`;
   const ul = document.getElementById("Show");
@@ -8,6 +9,8 @@ socket.on("message", (text) => {
 });
 
 const sendMsg = () => {
-  const txt = document.querySelector("input").value;
-  socket.emit("message", txt);
+  const mail = document.getElementById("mail").value;
+  const txt = document.getElementById("text").value;
+
+  socket.emit("message", mail, txt);
 };

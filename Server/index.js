@@ -8,8 +8,8 @@ io.on("connection", (socket) => {
   console.log("user connected");
 
   // custom event to listen to
-  socket.on("message", (msg) => {
-    console.log(msg);
+  socket.on("message", (mail, msg) => {
+    console.log(mail, msg);
     // prodcast the msg
     io.emit("message", `someone said ${msg}`);
   });
