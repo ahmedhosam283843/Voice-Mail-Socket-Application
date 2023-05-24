@@ -1,7 +1,9 @@
 import React, { useState, useRef } from "react";
 import { saveAs } from "file-saver";
+import RecordRTC from "recordrtc";
+import "./style.css";
 
-const MyForm = () => {
+const RecordForm = () => {
   const [formData, setFormData] = useState({
     from: "",
     to: "",
@@ -10,12 +12,11 @@ const MyForm = () => {
 
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState(null);
-  const [, setRecordedAudioDuration] = useState(0);
+  const [recordedAudioDuration, setRecordedAudioDuration] = useState(0);
   const mediaRecorderRef = useRef(null);
   const audioPlayerRef = useRef(null);
   const chunksRef = useRef([]);
   const startTimeRef = useRef(0);
-  const [byteArray, setByteArray] = useState(null);
 
   // Handle input changes in the form
   const handleChange = (e) => {
@@ -77,44 +78,41 @@ const MyForm = () => {
     setRecordedAudio(URL.createObjectURL(audioBlob));
     const duration = Date.now() - startTimeRef.current;
     setRecordedAudioDuration(duration);
-    convertToArrayBuffer(audioBlob);
-  };
-
-  // Convert audio blob to array buffer
-  const convertToArrayBuffer = (blob) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setByteArray(reader.result);
-    };
-    reader.readAsArrayBuffer(blob);
-  };
-
-  // Handle recording again button click
-  const handleRecordAgain = () => {
-    setRecordedAudio(null);
-    setRecordedAudioDuration(0);
-    setByteArray(null);
   };
 
   // Handle delete record button click
   const handleDeleteRecord = () => {
     setRecordedAudio(null);
     setRecordedAudioDuration(0);
-    setByteArray(null);
   };
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Prepare data for saving as a text file
-    const dataArray = [
-      `From: ${formData.from}`,
-      `To: ${formData.to}`,
-      `Subject: ${formData.subject}`,
-      ...Array.from(new Uint8Array(byteArray)),
-    ];
-    const fileData = new Blob(dataArray, { type: "text/plain;charset=utf-8" });
-    saveAs(fileData, "data.txt");
+    if (recordedAudio) {
+      try {
+        const audio = audioPlayerRef.current;
+        const audioContext = new AudioContext();
+        const audioSource = audioContext.createMediaElementSource(audio);
+        const destinationNode = audioContext.createMediaStreamDestination();
+        audioSource.connect(destinationNode);
+        const mediaRecorder = new RecordRTC(destinationNode.stream, {
+          type: "audio",
+          mimeType: "audio/wav", // or 'audio/mp3'
+          desiredSampRate: 16000,
+        });
+        mediaRecorder.startRecording();
+        audio.play();
+        setTimeout(() => {
+          mediaRecorder.stopRecording(() => {
+            const blob = mediaRecorder.getBlob();
+            saveAs(blob, "recorded-audio.wav"); // or 'recorded-audio.mp3'
+          });
+        }, recordedAudioDuration);
+      } catch (err) {
+        alert("Already Submited!!!");
+      }
+    }
   };
 
   // Render the form and audio recorder
@@ -164,13 +162,6 @@ const MyForm = () => {
                   <button
                     type="button"
                     className="audio-control-btn"
-                    onClick={handleRecordAgain}
-                  >
-                    Record Again
-                  </button>
-                  <button
-                    type="button"
-                    className="audio-control-btn"
                     onClick={handleDeleteRecord}
                   >
                     Delete
@@ -202,4 +193,4 @@ const MyForm = () => {
   );
 };
 
-export default MyForm;
+export default RecordForm;
