@@ -1,43 +1,39 @@
 import React, { useState } from "react";
 import { socket } from "../socket";
 
-export function MyForm({ userName, setMessages }) {
-  const [message, setMessage] = useState("");
+function ChatForm({ userId }) {
+  const [inputValue, setInputValue] = useState("");
   const [receiverId, setReceiverId] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  function onSubmit(event) {
-    event.preventDefault();
-    setIsLoading(true);
-
-    socket.timeout(5000).emit(
-      "chat message",
-      {
-        senderId: userName,
-        receiverId,
-        message: message,
-      },
-      () => {
-        setIsLoading(false);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { userName, message, received: false },
-        ]);
-      }
-    );
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    socket.emit("chat message", {
+      senderId: userId,
+      receiverId,
+      message: inputValue,
+    });
+    setInputValue("");
+  };
 
   return (
-    <form onSubmit={onSubmit}>
+    <div>
+      <label htmlFor="receiverId">Receiver ID: </label>
       <input
-        placeholder="Rec"
+        type="text"
+        id="receiverId"
+        value={receiverId}
         onChange={(e) => setReceiverId(e.target.value)}
       />
-      <input placeholder="Msg" onChange={(e) => setMessage(e.target.value)} />
-
-      <button type="submit" disabled={isLoading}>
-        Submit
-      </button>
-    </form>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
   );
 }
+
+export { ChatForm };

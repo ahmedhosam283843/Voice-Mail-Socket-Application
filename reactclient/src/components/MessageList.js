@@ -1,6 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { socket } from "../socket";
 
-function MessageList({ messages }) {
+function MessageList() {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    socket.on("chat message", ({ senderId, message }) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { senderId, message, received: true },
+      ]);
+    });
+  }, []);
+
   return (
     <ul>
       {messages.map((message, index) => (
@@ -13,4 +25,4 @@ function MessageList({ messages }) {
   );
 }
 
-export default MessageList;
+export { MessageList };

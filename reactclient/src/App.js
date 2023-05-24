@@ -1,48 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { socket } from "./socket";
-import { ConnectionState } from "./components/ConnectionState";
-import { ConnectionManager } from "./components/ConnectionManager";
-import { MyForm } from "./components/MyForm";
-import MessageList from "./components/MessageList";
+import React, { useState } from "react";
+import { Route, Routes } from "react-router-dom";
+
+import { UserForm } from "./components/ConnectionManager";
+import { ChatForm } from "./components/MyForm";
+import { MessageList } from "./components/MessageList";
 
 import "./App.css";
 
 export default function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [userName, setUserName] = useState("");
-  const [messages, setMessages] = useState([]);
-
-  useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
-    socket.on("chat message", ({ senderId, message }) => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { senderId, message, received: true },
-      ]);
-    });
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
+  const [userId, setUserId] = useState("");
 
   return (
-    <div className="App">
-      <ConnectionState userName={userName} isConnected={isConnected} />
-      <ConnectionManager userName={userName} setUserName={setUserName} />
-      <MyForm userName={userName} setMessages={setMessages} />
-      <MessageList messages={messages} />
-    </div>
+    <Routes>
+      <Route
+        path="/"
+        element={<UserForm userId={userId} setUserId={setUserId} />}
+      />
+      <Route
+        path="/chat"
+        element={
+          userId !== "" ? (
+            <div>
+              <ChatForm userId={userId} />
+              <MessageList />
+            </div>
+          ) : (
+            <div>
+              <h3>GO TO: localhost:3000/ to login</h3>
+            </div>
+          )
+        }
+      />
+    </Routes>
   );
 }
