@@ -14,6 +14,9 @@ const server = http.createServer(app);
 const io = new Server(server);
 const PORT = 5000;
 
+// Create a map to store userId with socketId
+const userSocketMap = new Map();
+
 // enable CORS
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*"); // allow requests from any origin
@@ -68,26 +71,37 @@ io.on("connection", (socket) => {
   // Emit the userId to the client
   socket.emit("userConnected", { userId });
 
+  // Store the userId with the socketId in the map
+  userSocketMap.set(userId, socket.id);
+
+
   // Handle mail events
   socket.on("sendMail", async (data) => {
     // Implement sending mail logic here
     // Example: You can save the mail to a database or perform other actions
-    // using the userId and data received from the client
-    console.log(`User ${userId} is sending a mail:`, data);
+    // console.log(`User ${userId} is sending a mail:`, data);
     const receiver_mail = data.to;
 
     const receiver = await getUserByEmail(receiver_mail);
-    const receiver_id = receiver.user_id;
-    
+    const receiver_id = receiver.user_id.toString();
+
+        // Emit a "receive" event to the client with the receiver_id
+        const receiverSocketId = userSocketMap.get(receiver_id);
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit("mailReceived", { message: "Mail received" , data: data });
+        }
+
     // Emit a response event to the client
     socket.emit("mailSent", { message: "Mail sent successfully" });
+    // Emit a "receive" event to the client with the receiver_id
+    // to individual socketid (private message)
   });
 
   socket.on("receiveMail", () => {
     // Implement receiving mail logic here
     // Example: You can retrieve mails for the user with userId
     // and emit an event to the client with the received mails
-    const mails = fetchMailsForUser(userId);
+    // const mails = fetchMailsForUser(userId);
 
     // Emit a response event to the client
     socket.emit("mailReceived", mails);
