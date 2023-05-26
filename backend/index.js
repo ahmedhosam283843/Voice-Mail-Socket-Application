@@ -5,6 +5,7 @@ import http from "http";
 import { Server } from "socket.io";
 import jwt, { verify } from "jsonwebtoken";
 import { getUserByEmail } from "./db/db_queries/login_queries.js";
+import { AddAndRetrieveUpdatedMails } from "./db/db_queries/mail_queries.js";
 
 import dotenv from "dotenv";
 import { Console } from "console";
@@ -74,7 +75,6 @@ io.on("connection", (socket) => {
   // Store the userId with the socketId in the map
   userSocketMap.set(userId, socket.id);
 
-
   // Handle mail events
   socket.on("sendMail", async (data) => {
     // Implement sending mail logic here
@@ -85,11 +85,20 @@ io.on("connection", (socket) => {
     const receiver = await getUserByEmail(receiver_mail);
     const receiver_id = receiver.user_id.toString();
 
-        // Emit a "receive" event to the client with the receiver_id
-        const receiverSocketId = userSocketMap.get(receiver_id);
-        if (receiverSocketId) {
-          io.to(receiverSocketId).emit("mailReceived", { message: "Mail received" , data: data });
-        }
+    const mails_list = await AddAndRetrieveUpdatedMails(userId, {
+      receiver_mail: receiver_mail,
+      date_time: data.date_time,
+      subject: data.subject,
+      audio_data: data.message,
+    });
+    
+    // Emit a "receive" event to the client with the receiver_id
+    const receiverSocketId = userSocketMap.get(receiver_id);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("mailReceived", {
+        mails_list: mails_list,
+      });
+    }
 
     // Emit a response event to the client
     socket.emit("mailSent", { message: "Mail sent successfully" });
