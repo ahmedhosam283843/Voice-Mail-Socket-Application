@@ -46,4 +46,18 @@ async function AddAndRetrieveUpdatedMails(userId, mailData) {
   return result.rows;
 }
 
+
+async function getMailsByReceiverEmail(receiverEmail) {
+  const result = await pool.query(
+    "SELECT * FROM mail WHERE receiver_mail = $1",
+    [receiverEmail]
+  );
+  return result.rows;
+}
+
+
+export { getMailByUserId, createMail, AddAndRetrieveUpdatedMails, getMailsByReceiverEmail };
+
+
+
 export { getMailByUserId, createMail, AddAndRetrieveUpdatedMails };
