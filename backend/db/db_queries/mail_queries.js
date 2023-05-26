@@ -16,15 +16,10 @@ async function getMailByUserId(request, response) {
 
 async function createMail(request, response) {
   const sender_id = parseInt(request.user);
-  const {
-    receiver_mail,
-    date_time,
-    subject,
-    audio_data,
-  } = request.body;
+  const { receiver_mail, date_time, subject, audio_data } = request.body;
   pool.query(
-    "INSERT INTO project (sender_id, receiver_mail, datetime, subject,audio_data) VALUES ($1, $2, $3, $4, $5)",
-    [sender_id, receiver_mail, date_time, subject,audio_data],
+    "INSERT INTO mail (sender_id, receiver_mail, datetime, subject,audio_data) VALUES ($1, $2, $3, $4, $5)",
+    [sender_id, receiver_mail, date_time, subject, audio_data],
 
     (error, results) => {
       if (error) {
