@@ -56,8 +56,8 @@ async function deleteUser(request, response) {
   );
 }
 
-async function getUserIDFromMail(email) {
-  const result = await pool.query('SELECT user_id FROM "User" WHERE email = $1', [email]);
+async function getMailFromUserId(user_id) {
+  const result = await pool.query('SELECT email FROM "User" WHERE user_id = $1', [user_id]);
   if (result.rows.length > 0) {
     return result.rows[0].user_id;
   } else {
@@ -66,4 +66,4 @@ async function getUserIDFromMail(email) {
 }
 
 
-export { getUserById, createUser, deleteUser, getUserIDFromMail };
+export { getUserById, createUser, deleteUser, getMailFromUserId };
