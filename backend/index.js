@@ -4,7 +4,11 @@ import { userRouter, mailRouter } from "./routers/index.js";
 import http from "http";
 import { Server } from "socket.io";
 import jwt, { verify } from "jsonwebtoken";
+import { getUserByEmail } from "./db/db_queries/login_queries.js";
 
+import dotenv from "dotenv";
+import { Console } from "console";
+dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -41,22 +45,53 @@ io.use((socket, next) => {
   if (token) {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) {
-        // socket.emit("connect_error", "Invalid token");
         return next(new Error("Invalid token"));
       } else {
-        console.log("decoded", decoded);
-        socket.userId = decoded;
+        socket.user = {
+          id: decoded, // Extract the user ID from the decoded token and assign it to socket.user.id
+          // Other user properties if available
+        };
+
         return next();
       }
     });
   } else {
-    // socket.emit("connect_error", "Authentication token missing");
     return next(new Error("Authentication token missing"));
   }
 });
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
+  // Extract the user ID from the authenticated socket
+  const userId = socket.user.id;
+  console.log(`User ${userId} Connected`);
+
+  // Emit the userId to the client
+  socket.emit("userConnected", { userId });
+
+  // Handle mail events
+  socket.on("sendMail", async (data) => {
+    // Implement sending mail logic here
+    // Example: You can save the mail to a database or perform other actions
+    // using the userId and data received from the client
+    console.log(`User ${userId} is sending a mail:`, data);
+    const receiver_mail = data.to;
+
+    const receiver = await getUserByEmail(receiver_mail);
+    const receiver_id = receiver.user_id;
+    
+    // Emit a response event to the client
+    socket.emit("mailSent", { message: "Mail sent successfully" });
+  });
+
+  socket.on("receiveMail", () => {
+    // Implement receiving mail logic here
+    // Example: You can retrieve mails for the user with userId
+    // and emit an event to the client with the received mails
+    const mails = fetchMailsForUser(userId);
+
+    // Emit a response event to the client
+    socket.emit("mailReceived", mails);
+  });
 
   socket.on("disconnect", () => {
     console.log("A user disconnected");
