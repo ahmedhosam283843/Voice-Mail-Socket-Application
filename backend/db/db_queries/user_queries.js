@@ -1,7 +1,9 @@
 import pool from "../db_pool.cjs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-require('dotenv').config();
+import dotenv from "dotenv";
+dotenv.config();
+
 async function getUserById(request, response) {
   const id = parseInt(request.user);
 

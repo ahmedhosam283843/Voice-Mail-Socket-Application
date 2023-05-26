@@ -1,7 +1,12 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { userRouter, mailRouter } from "./routers/index.js";
+import http from "http";
+import { Server } from "socket.io";
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 const PORT = 5000;
 
 // enable CORS
@@ -27,6 +32,14 @@ app.all("*", (req, res) =>
   res.send("You've tried reaching a route that doesn't exist.")
 );
 
-app.listen(PORT, () => {
-  console.log(`Server running on port:  http://localhost:${PORT}`);
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port: http://localhost:${PORT}`);
 });
