@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-async function getUserByEmail(email) {
-  const result = await pool.query('SELECT * FROM "user" WHERE email = $1', [
+export async function getUserByEmail(email) {
+  const result = await pool.query('SELECT * FROM "User" WHERE email = $1', [
     email,
   ]);
   return result.rows[0];
@@ -39,4 +39,4 @@ async function getUserByEmail(email) {
 
 
 
-  export default login;
+  export default login ;

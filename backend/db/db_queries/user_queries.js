@@ -1,6 +1,8 @@
 import pool from "../db_pool.cjs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 async function getUserById(request, response) {
   const id = parseInt(request.user);
@@ -54,4 +56,14 @@ async function deleteUser(request, response) {
   );
 }
 
-export { getUserById, createUser, deleteUser };
+async function getMailFromUserId(user_id) {
+  const result = await pool.query('SELECT email FROM "User" WHERE user_id = $1', [user_id]);
+  if (result.rows.length > 0) {
+    return result.rows[0].email;
+  } else {
+    return null;
+  }
+}
+
+
+export { getUserById, createUser, deleteUser, getMailFromUserId };
