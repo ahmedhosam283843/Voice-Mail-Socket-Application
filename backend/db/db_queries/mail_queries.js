@@ -57,7 +57,3 @@ async function getMailsByReceiverEmail(receiverEmail) {
 
 
 export { getMailByUserId, createMail, AddAndRetrieveUpdatedMails, getMailsByReceiverEmail };
-
-
-
-export { getMailByUserId, createMail, AddAndRetrieveUpdatedMails };

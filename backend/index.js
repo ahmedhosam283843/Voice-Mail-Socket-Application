@@ -5,7 +5,9 @@ import http from "http";
 import { Server } from "socket.io";
 import jwt, { verify } from "jsonwebtoken";
 import { getUserByEmail } from "./db/db_queries/login_queries.js";
-import { AddAndRetrieveUpdatedMails } from "./db/db_queries/mail_queries.js";
+import { AddAndRetrieveUpdatedMails, getMailsByReceiverEmail } from "./db/db_queries/mail_queries.js";
+import { getMailFromUserId } from "./db/db_queries/user_queries.js";
+
 
 import dotenv from "dotenv";
 import { Console } from "console";
@@ -102,18 +104,13 @@ io.on("connection", (socket) => {
 
     // Emit a response event to the client
     socket.emit("mailSent", { message: "Mail sent successfully" });
-    // Emit a "receive" event to the client with the receiver_id
-    // to individual socketid (private message)
   });
 
-  socket.on("receiveMail", () => {
-    // Implement receiving mail logic here
-    // Example: You can retrieve mails for the user with userId
-    // and emit an event to the client with the received mails
-    // const mails = fetchMailsForUser(userId);
-
+  socket.on("getMails", async () => {
+    const email  = await getMailFromUserId(userId);
+    const mails_list = await getMailsByReceiverEmail(email);
     // Emit a response event to the client
-    socket.emit("mailReceived", mails);
+    socket.emit("mailReceived", {mails_list: mails_list});
   });
 
   socket.on("disconnect", () => {

@@ -59,7 +59,7 @@ async function deleteUser(request, response) {
 async function getMailFromUserId(user_id) {
   const result = await pool.query('SELECT email FROM "User" WHERE user_id = $1', [user_id]);
   if (result.rows.length > 0) {
-    return result.rows[0].user_id;
+    return result.rows[0].email;
   } else {
     return null;
   }
