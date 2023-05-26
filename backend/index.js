@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import { userRouter, mailRouter } from "./routers/index.js";
 import http from "http";
 import { Server } from "socket.io";
+import jwt, { verify } from "jsonwebtoken";
 
 const app = express();
 const server = http.createServer(app);
@@ -31,6 +32,28 @@ app.get("/", (req, res) => {
 app.all("*", (req, res) =>
   res.send("You've tried reaching a route that doesn't exist.")
 );
+
+// Middleware to authenticate the token before connecting to Socket.IO
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+
+  // Perform token verification here
+  if (token) {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        // socket.emit("connect_error", "Invalid token");
+        return next(new Error("Invalid token"));
+      } else {
+        console.log("decoded", decoded);
+        socket.userId = decoded;
+        return next();
+      }
+    });
+  } else {
+    // socket.emit("connect_error", "Authentication token missing");
+    return next(new Error("Authentication token missing"));
+  }
+});
 
 io.on("connection", (socket) => {
   console.log("A user connected");
