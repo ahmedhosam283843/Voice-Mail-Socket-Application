@@ -25,8 +25,8 @@ async function createUser(request, response) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     pool.query(
-      'INSERT INTO "User" (name, email, password, address, city, state, zip) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING user_id',
-      [name, email, hashedPassword, address, city, state, zip],
+      'INSERT INTO "User" (name, email, password) VALUES ($1, $2, $3) RETURNING user_id',
+      [name, email, hashedPassword],
       (error, results) => {
         if (error) {
           throw error;
