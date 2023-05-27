@@ -11,14 +11,22 @@ const Login = (props) => {
 
     useEffect(() => {
         sessionStorage.removeItem("token")
+        localStorage.removeItem("token")
       }, []);
 
     const LignupHandel = async (data)=>{
-        const url = "http://localhost:5000/user"
+        const url = "http://localhost:5000/login"
         try{
-          const res = await axios.post(url,data);
-          const token = res.data.acssessToken;
-          sessionStorage.setItem("token",token);
+          
+          const res = await axios.post(url, data);
+          console.log(res);
+          const token = res.data.accessToken;
+          console.log("token: " + token);
+          sessionStorage.removeItem("token");
+          localStorage.removeItem("token");
+    
+          sessionStorage.setItem("token", token);
+          localStorage.setItem("token", token);
           navigate("/mailbox");
         }catch(error){
           console.error(error);
