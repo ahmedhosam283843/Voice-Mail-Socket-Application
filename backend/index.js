@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { userRouter, mailRouter } from "./routers/index.js";
+import { userRouter, mailRouter, loginRouter } from "./routers/index.js";
 import http from "http";
 import { Server } from "socket.io";
 import jwt, { verify } from "jsonwebtoken";
@@ -38,6 +38,7 @@ app.use(function (req, res, next) {
 app.use(bodyParser.json());
 
 app.use("/user", userRouter);
+app.use("/login", loginRouter);
 app.use("/mail", mailRouter);
 
 app.get("/", (req, res) => {
