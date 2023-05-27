@@ -1,15 +1,23 @@
 .topbar {
   background: rgba(0, 0, 0, 0.75);
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 ul{
   gap: 100px;
   display: flex;
-  width: 100vw;
 }
 
 .top-link{
   color: white;
   text-decoration: none;
   font-weight: 600;
+}
+
+.at-right{
+  padding-right: 10px;
+
 }

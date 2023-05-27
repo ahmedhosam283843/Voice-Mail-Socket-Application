@@ -1,9 +1,16 @@
+.auth-form-container{
+  width: 100vw;
+  height: 100vh;
+  background-image: linear-gradient(79deg, #f3e8ff, #bacddb 48%, #ce5959);
+}
+
 .auth-form-container,
 .login-form,
 .register-form {
   display: flex;
   flex-direction: column;
   padding: 5rem;
+  align-items: center;
 }
 @media screen and (min-width: 600px) {
   .auth-form-container {
