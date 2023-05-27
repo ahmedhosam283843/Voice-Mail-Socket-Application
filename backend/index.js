@@ -5,16 +5,21 @@ import http from "http";
 import { Server } from "socket.io";
 import jwt, { verify } from "jsonwebtoken";
 import { getUserByEmail } from "./db/db_queries/login_queries.js";
-import { AddAndRetrieveUpdatedMails, getMailsByReceiverEmail } from "./db/db_queries/mail_queries.js";
+import {
+  AddAndRetrieveUpdatedMails,
+  getMailsByReceiverEmail,
+} from "./db/db_queries/mail_queries.js";
 import { getMailFromUserId } from "./db/db_queries/user_queries.js";
-
 
 import dotenv from "dotenv";
 import { Console } from "console";
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  // Enable any url to acsses
+  cors: { origin: "*" },
+});
 const PORT = 5000;
 
 // Create a map to store userId with socketId
@@ -93,7 +98,7 @@ io.on("connection", (socket) => {
       subject: data.subject,
       audio_data: data.message,
     });
-    
+
     // Emit a "receive" event to the client with the receiver_id
     const receiverSocketId = userSocketMap.get(receiver_id);
     if (receiverSocketId) {
@@ -107,10 +112,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("getMails", async () => {
-    const email  = await getMailFromUserId(userId);
+    const email = await getMailFromUserId(userId);
     const mails_list = await getMailsByReceiverEmail(email);
     // Emit a response event to the client
-    socket.emit("mailReceived", {mails_list: mails_list});
+    socket.emit("mailReceived", { mails_list: mails_list });
   });
 
   socket.on("disconnect", () => {
