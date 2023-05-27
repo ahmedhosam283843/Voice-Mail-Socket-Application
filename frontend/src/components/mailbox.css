@@ -1,0 +1,19 @@
+.mailbox-Container{
+    display: flex;
+    flex-direction: column;
+}
+
+.mainScreen{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.email-details__wrapper{
+    width: max(65vw);
+    padding: 20px;
+}
+
+.pull-right {
+    float: right;
+}

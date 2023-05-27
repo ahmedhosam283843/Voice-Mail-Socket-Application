@@ -1,7 +1,11 @@
 import React from "react";
+import Topbar from "./mailbox/Topbar";
 
 const Compose = () => {
-  return <div>Compose</div>;
+  return <>
+  <Topbar />
+
+</>;
 };
 
 export default Compose;
