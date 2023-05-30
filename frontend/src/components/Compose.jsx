@@ -1,8 +1,9 @@
 import React,{ useState, useRef } from "react";
-import { saveAs } from "file-saver";
 import RecordRTC from "recordrtc";
 import Topbar from "./mailbox/Topbar";
 import './compose.css'
+import getSocket from "./socket";
+
 const Compose = () => {
 
   const [formData, setFormData] = useState({
@@ -90,6 +91,7 @@ const Compose = () => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    const socket = getSocket(localStorage.getItem("token"));
     if (recordedAudio) {
       try {
         const audio = audioPlayerRef.current;
@@ -107,7 +109,14 @@ const Compose = () => {
         setTimeout(() => {
           mediaRecorder.stopRecording(() => {
             const blob = mediaRecorder.getBlob();
-            saveAs(blob, "recorded-audio.mp3"); // or 'recorded-audio.wav'
+            const mailData = {
+              to: formData.to, //client 2
+              subject: formData.subject,
+              message: blob,
+              date_time: new Date().toISOString(),
+          
+            };
+            socket.emit("sendMail",mailData);
           });
         }, recordedAudioDuration);
       } catch (err) {

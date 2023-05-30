@@ -7,9 +7,9 @@ import './sidebar.css'
 const Sidebar = ({emails,setEmails,currentEmailId,setCurrentEmailId}) => {
 
     const openEmail = (id) => {
-        const updatedEmails = [...emails];
-        updatedEmails[id].read = "true";
-        setEmails(updatedEmails);
+        // const updatedEmails = [...emails];
+        // updatedEmails[id].read = "true";
+        // setEmails(updatedEmails);
         setCurrentEmailId(id);
     };
 

@@ -6,15 +6,6 @@ const EmailListItem = (props) => {
         const time = date.split(" ")[1].split(":");
         return `${time[0]}:${time[1]}`;
     };
-        
-    const truncateString = (str, maxLength) => {
-        if (str.length > maxLength) {
-            return str.slice(0, maxLength) + '...';
-        } else {
-            return str;
-        }
-    };
-        
 
     console.log(props);
 
@@ -22,7 +13,7 @@ const EmailListItem = (props) => {
     const time = splitSeconds(props.email.time);
     let classes = "email-item";
     if (props.selected) {
-        classes += " active unread";
+        classes += " active";
     }
 
     return (
@@ -34,7 +25,7 @@ const EmailListItem = (props) => {
         <div className="email-item__read" data-read={props.email.read}></div>
         <div className="email-item__time">{time}</div>
         <div className="email-item__message">
-        <p>{truncateString(props.email.message, 100)}</p>
+        <p>{"Audio File"}</p>
         </div>
     </div>
     );
