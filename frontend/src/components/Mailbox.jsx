@@ -1,9 +1,11 @@
-import React,{useState} from "react";
+import React,{useState, useEffect} from "react";
 import Topbar from "./mailbox/Topbar";
 import Sidebar from "./mailbox/Sidebar";
 import MailDetails from './mailbox/MailDetails'
-
+import getSocket from "./socket";
 import './mailbox.css'
+
+
 const Mailbox = () => {
 
   const [currentEmailId, setCurrentEmailId] = useState(0);
@@ -32,6 +34,20 @@ const Mailbox = () => {
     }
   ]);
   
+
+  useEffect(()=>{
+    const socket = getSocket(localStorage.getItem("token"));
+    // get mails list
+    socket.emit("getMails");
+
+    socket.on("mailReceived", (message) => {
+      //log list length
+      console.log("Received mails Count:", message.mails_list.length);
+      // Handle received mails
+      // Example: Update UI to display received mails
+      setEmails(message.mails_list);
+    });
+  },[])
   
   return <>
   <div className="mailbox-Container">

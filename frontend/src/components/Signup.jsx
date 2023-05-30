@@ -20,7 +20,7 @@ const Signup = () => {
 
       sessionStorage.setItem("token", token);
       localStorage.setItem("token", token);
-      navigate("/");
+      navigate("/mailbox");
     } catch (error) {
       console.error(error);
     }
