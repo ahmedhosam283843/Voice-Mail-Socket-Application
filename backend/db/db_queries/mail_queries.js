@@ -31,12 +31,11 @@ async function createMail(request, response) {
 }
 
 
-async function AddAndRetrieveUpdatedMails(userId, mailData) {
-  const sender_id = parseInt(userId);
-  const { receiver_mail, date_time, subject, audio_data } = mailData;
+async function AddAndRetrieveUpdatedMails(sender_mail, mailData) {
+  const {receiver_mail, date_time, subject, audio_data } = mailData;
   await pool.query(
-    "INSERT INTO mail (sender_id, receiver_mail, date_time, subject, audio_data) VALUES ($1, $2, $3, $4, $5)",
-    [sender_id, receiver_mail, date_time, subject, audio_data]
+    "INSERT INTO mail (sender_mail, receiver_mail, date_time, subject, audio_data) VALUES ($1, $2, $3, $4, $5)",
+    [sender_mail, receiver_mail, date_time, subject, audio_data]
   );
 
   const result = await pool.query(

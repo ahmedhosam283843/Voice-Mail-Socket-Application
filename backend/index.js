@@ -89,11 +89,11 @@ io.on("connection", (socket) => {
     // Example: You can save the mail to a database or perform other actions
     // console.log(`User ${userId} is sending a mail:`, data);
     const receiver_mail = data.to;
-
+    const sender_mail = await getMailFromUserId(userId);
     const receiver = await getUserByEmail(receiver_mail);
     const receiver_id = receiver.user_id.toString();
 
-    const mails_list = await AddAndRetrieveUpdatedMails(userId, {
+    const mails_list = await AddAndRetrieveUpdatedMails(sender_mail, {
       receiver_mail: receiver_mail,
       date_time: data.date_time,
       subject: data.subject,

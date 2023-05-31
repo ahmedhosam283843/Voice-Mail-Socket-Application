@@ -36,7 +36,7 @@ socket.on("connect_error", (error) => {
 
 socket.on("mailReceived", (message) => {
   //log list length
-  console.log("Received mails Count:", message.mails_list.length);
+  console.log( message.mails_list);
   // Handle received mails
   // Example: Update UI to display received mails
 });
@@ -48,5 +48,5 @@ socket.on("mailSent", (response) => {
   // Example: Show success message to the user
 });
 
-// get mails list
+// get mails list at the beginning
 socket.emit("getMails");

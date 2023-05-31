@@ -47,6 +47,7 @@ socket.on("mailSent", (response) => {
   // Example: Show success message to the user
 });
 
+// Send a mail every 5 seconds
 setInterval(() => {
   const mailData = {
     to: "jssdf@example.com", //client 2
@@ -59,5 +60,5 @@ setInterval(() => {
   socket.emit("sendMail", mailData );
 }, 5000);
 
-// get mails list
+// get mails list at the beginning
 socket.emit("getMails");
