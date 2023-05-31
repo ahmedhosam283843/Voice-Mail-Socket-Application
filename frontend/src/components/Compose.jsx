@@ -7,7 +7,6 @@ import getSocket from "./socket";
 const Compose = () => {
 
   const [formData, setFormData] = useState({
-    from: "",
     to: "",
     subject: "",
   });
@@ -109,8 +108,9 @@ const Compose = () => {
         setTimeout(() => {
           mediaRecorder.stopRecording(() => {
             const blob = mediaRecorder.getBlob();
+            console.log(blob);
             const mailData = {
-              to: formData.to, //client 2
+              to: formData.to,
               subject: formData.subject,
               message: blob,
               date_time: new Date().toISOString(),
@@ -131,17 +131,6 @@ const Compose = () => {
       <div className="mainScreen">
         <form onSubmit={handleSubmit} className="form-container">
           <h2 className="form-title">New Message</h2>
-          <div className="form-group">
-            <label htmlFor="from">From</label>
-            <input
-              type="text"
-              id="from"
-              name="from"
-              value={formData.from}
-              onChange={handleChange}
-              className="form-input"
-            />
-          </div>
           <div className="form-group">
             <label htmlFor="to">To</label>
             <input

@@ -9,26 +9,8 @@ import './mailbox.css'
 const Mailbox = () => {
 
   const [currentEmailId, setCurrentEmailId] = useState(0);
-  const [emails, setEmails] = useState([
-    {
-      "id":0,
-      "from": "Maxime Preaux",
-      "address": "maxime@codepen.io",
-      "time": "2016-10-07 15:35:14",
-      "subject": "Messing with React.js",
-      "content": <audio src='https://www.w3schools.com/html/horse.mp3' controls />
-    },
-    {
-      "id":1,
-      "from": "Dribbble",
-      "address": "digest@dribbble.com",
-      "time": "2016-05-09 14:23:54",
-      "subject": "Dribbble Digest",
-      "content": <audio src='https://www.w3schools.com/html/horse.mp3' controls />
-    }
-  ]);
-  
-
+  const [emails, setEmails] = useState([]);
+    
   useEffect(()=>{
     const socket = getSocket(localStorage.getItem("token"));
     // get mails list
@@ -37,9 +19,7 @@ const Mailbox = () => {
     socket.on("mailReceived", (message) => {
       //log list length
       console.log("Received mails Count:", message.mails_list.length);
-      // Handle received mails
-      // Example: Update UI to display received mails
-      // setEmails(message.mails_list);
+      setEmails(message.mails_list);
     });
   },[])
   
@@ -48,8 +28,8 @@ const Mailbox = () => {
     <Topbar />
     <div className="mainScreen">
 
-      <Sidebar emails={emails} setEmails={setEmails} currentEmailId={currentEmailId} setCurrentEmailId={setCurrentEmailId}/>
-      {/* <MailDetails emails={emails} currentEmailId={currentEmailId}/> */}
+      <Sidebar emails={emails} currentEmailId={currentEmailId} setCurrentEmailId={setCurrentEmailId}/>
+      <MailDetails emails={emails} currentEmailId={currentEmailId} />
     </div>
 
   </div>

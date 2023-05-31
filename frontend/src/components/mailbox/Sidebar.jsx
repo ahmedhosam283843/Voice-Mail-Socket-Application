@@ -4,12 +4,9 @@ import EmailListItem from './EmailListItem';
 
 import './sidebar.css'
 
-const Sidebar = ({emails,setEmails,currentEmailId,setCurrentEmailId}) => {
+const Sidebar = ({emails,currentEmailId,setCurrentEmailId}) => {
 
     const openEmail = (id) => {
-        // const updatedEmails = [...emails];
-        // updatedEmails[id].read = "true";
-        // setEmails(updatedEmails);
         setCurrentEmailId(id);
     };
 
@@ -31,9 +28,9 @@ const Sidebar = ({emails,setEmails,currentEmailId,setCurrentEmailId}) => {
         {emails.map((email) => (
             
             <EmailListItem
-                key={email.id}
+                key={email.mail_id}
                 email={email}
-                selected={currentEmailId === email.id}
+                selected={currentEmailId === email.mail_id}
                 openEmail = {openEmail}
             />
         ))}
